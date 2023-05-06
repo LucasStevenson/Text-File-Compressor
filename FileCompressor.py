@@ -46,12 +46,11 @@ class Node:
     def __str__(self):
         return f"{self.char}: {self.freq}"
 
-# the frequency table that maps each character to how often it appears in the text
-freq_table = Counter(text)
 
-def build_huffman_tree(freq_table):
-    # haven't ran tests on this code yet. Only implemented it according to the rules of the algorithm so far
-    # TODO: make sure this code actually works like how its supposed to.
+# haven't ran tests on the method below yet. Only implemented it according to the rules of the algorithm so far
+# TODO: make sure this code actually works like how its supposed to.
+def build_huffman_tree(text):
+    freq_table = Counter(text) # the frequency table that maps each character to how often it appears in the text
     nodes = [ Node(char, freq) for char, freq in freq_table.items() ]
     heapq.heapify(nodes) # convert `nodes` to a min-heap
     while len(nodes) > 1:
@@ -62,3 +61,5 @@ def build_huffman_tree(freq_table):
         newNode.left = lNode
         newNode.right = rNode
         heapq.heappush(nodes, newNode)
+    return nodes[0]
+tree = build_huffman_tree(text)
