@@ -32,3 +32,33 @@ with open(filename) as f:
     text = f.read()
 
 # now time to implement the actual algorithm
+# first, we need a node class to represent the nodes that will be in the huffman tree
+class Node:
+    def __init__(self, char, freq):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+    def __lt__(self, other):
+        # magic method that allows us to compare frequencies between nodes
+        # this is important for implementing the priority queue
+        return self.freq < other.freq
+    def __str__(self):
+        return f"{self.char}: {self.freq}"
+
+# the frequency table that maps each character to how often it appears in the text
+freq_table = Counter(text)
+
+def build_huffman_tree(freq_table):
+    # haven't ran tests on this code yet. Only implemented it according to the rules of the algorithm so far
+    # TODO: make sure this code actually works like how its supposed to.
+    nodes = [ Node(char, freq) for char, freq in freq_table.items() ]
+    heapq.heapify(nodes) # convert `nodes` to a min-heap
+    while len(nodes) > 1:
+        # keep popping off the first two elements, joining them, and inserting back into the heap 
+        lNode = heapq.heappop(nodes)
+        rNode = heapq.heappop(nodes)
+        newNode = Node(None, lNode.freq+rNode.freq)
+        newNode.left = lNode
+        newNode.right = rNode
+        heapq.heappush(nodes, newNode)
