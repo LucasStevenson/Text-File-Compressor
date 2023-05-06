@@ -23,9 +23,8 @@ if not os.path.exists(filename):
     print(f"'{filename}' does not exist")
     sys.exit()
 # check that the file is a txt file
-extension = filename.split(".")[1]
-if extension != "txt": 
-    print("Please only pass in a text file")
+if not filename.endswith(".txt"): 
+    print("Please only pass in a text file and make sure the extension is '.txt'")
     sys.exit()
 
 # read the text in the file and save to a variable
