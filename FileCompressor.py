@@ -1,6 +1,7 @@
 from collections import Counter # this is for creating the frequency table
 import argparse
-import sys
+import sys, os
+import heapq # for creating the priority queue
 
 '''How this program is going to work
 User is going to run the program, with the only other arg being the text file they want to compress
@@ -16,15 +17,19 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", help="input text file to be compressed", required=True)
 args = parser.parse_args()
 
-inputFile = args.input
-extension = inputFile.split(".")[1]
-
-if extension != "txt":
+filename = args.input
+# check that the file exists
+if not os.path.exists(filename):
+    print(f"'{filename}' does not exist")
+    sys.exit()
+# check that the file is a txt file
+extension = filename.split(".")[1]
+if extension != "txt": 
     print("Please only pass in a text file")
     sys.exit()
 
-'''TODO
-- make sure the filename they passed in exists in the cwd and try to read in the file 
-- save the text into a string
-- implement the actual algorithm 
-'''
+# read the text in the file and save to a variable
+with open(filename) as f:
+    text = f.read()
+
+# now time to implement the actual algorithm
