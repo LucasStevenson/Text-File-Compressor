@@ -30,6 +30,7 @@ if not filename.endswith(".txt"):
 # read the text in the file and save to a variable
 with open(filename) as f:
     text = f.read()
+    assert len(text) > 0, "Please provide a text file with text in it"
 
 # now time to implement the actual algorithm
 # first, we need a node class to represent the nodes that will be in the huffman tree
@@ -44,7 +45,7 @@ class Node:
         # this is important for implementing the priority queue
         return self.freq < other.freq
     def __str__(self):
-        return f"{self.char}: {self.freq}"
+        return repr(f"{self.char}: {self.freq}")
 
 
 # haven't ran tests on the method below yet. Only implemented it according to the rules of the algorithm so far
@@ -62,4 +63,18 @@ def build_huffman_tree(text):
         newNode.right = rNode
         heapq.heappush(nodes, newNode)
     return nodes[0]
-tree = build_huffman_tree(text)
+
+def create_huffman_codes(node, s="", d={}):
+    # returns a dictionary that maps each letter to its huffman code
+    # going left on the huffman tree represents a 0 bit
+    # going right on the huffman tree represents a 1 bit
+    if node.char != None:
+        d[node.char] = s
+        return
+    create_huffman_codes(node.left, s+"0")
+    create_huffman_codes(node.right, s+"1")
+    return d
+
+root = build_huffman_tree(text)
+codes = create_huffman_codes(root)
+print(codes)
