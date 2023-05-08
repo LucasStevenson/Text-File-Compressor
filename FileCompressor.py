@@ -2,7 +2,7 @@ from collections import Counter # this is for creating the frequency table
 import argparse
 import sys, os
 import heapq # for creating the priority queue
-import pickle
+import pickle # for serializing the huffman code dict
 
 '''How this program is going to work
 User is going to run the program, with the only other arg being the text file they want to compress
@@ -93,7 +93,7 @@ def main():
         sys.exit()
     # make sure that the user either specified whether to compress or decompress the input file
     if not (args.compress ^ args.decompress):
-        print("Must specify whether you are compressing or decopmressing this file using the '--compress' option or '--decompress' option")
+        print("Must specify whether you are compressing or decompressing this file using the '--compress' option or '--decompress' option")
         sys.exit()
 
     if args.compress: # we are compressing a file
