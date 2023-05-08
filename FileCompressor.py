@@ -7,10 +7,13 @@ import pickle # for serializing the huffman code dict
 '''How this program is going to work
 User is going to run the program, with the only other arg being the text file they want to compress
 example:
-    python3 FileCompressor.py --input words.txt
+    python3 FileCompressor.py [--decompress|--compress] --input file.[txt|bin]
 
-The program is going to read in that text file, perform text compression using Huffman coding, and then write the result to a binary file
+When compressing, the program is going to read in that text file, perform text compression using Huffman coding, and then write the result to a binary file
 Output will be a message that everything went good, and the user should see a new file in their current working directory. The new file is the compressed file
+
+When decompressing, the program is going to read in the huffman code table and data from the binary file and get the original text back
+Output will be a message that everything went good, and the user shuold see a new file in their current working directory called 'decompressed.txt'
 '''
 
 # first, we need a node class to represent the nodes that will be in the huffman tree
@@ -61,6 +64,7 @@ class Compressor:
         codes = self.__create_huffman_codes(root)  
         # convert text to compressed binary data
         bits = "".join([ codes[c] for c in self.text ])
+        # convert the "bits" string into bytes
         compressed_data = bytearray([int(bits[i:i+8], 2) for i in range(0, len(bits), 8)])
         with open("compressed.bin", "wb") as f:
             # in the compressed binary, we need to store the compressed data alongside the huffman codes dictionary
@@ -72,12 +76,23 @@ class Compressor:
 
 class Decompressor:
     def __init__(self, codes, compressed_data):
-        self.codes = codes
+        self.codes = { v: k for k,v in codes.items() }
         self.compressed_data = compressed_data
 
     def decompress(self):
-        # TODO: complete this 
-        pass
+        # we want to pad every single byte except for the last one
+        # if we pad the last byte, we might be adding extra bits, which will add an extra character at the end when decompressing
+        bits = "".join([ bin(byte)[2:].zfill(8) if i != len(self.compressed_data)-1 else bin(byte)[2:] for i,byte in enumerate(self.compressed_data) ])
+        binString = ""
+        originalString = ""
+        for bit in bits:
+            binString += bit
+            if binString in self.codes:
+                originalString += self.codes[binString]
+                binString = ""
+        with open("decompressed.txt", "w") as f:
+            f.write(originalString)
+        print("Decompression complete. Output written to 'decompressed.txt'")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -93,7 +108,7 @@ def main():
         sys.exit()
     # make sure that the user either specified whether to compress or decompress the input file
     if not (args.compress ^ args.decompress):
-        print("Must specify whether you are compressing or decompressing this file using the '--compress' option or '--decompress' option")
+        print("Must specify whether you are compressing or decompressing this file using the '--compress' option or '--decompress' option (but not both)")
         sys.exit()
 
     if args.compress: # we are compressing a file
